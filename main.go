@@ -3,16 +3,21 @@ package main
 import "fmt"
 
 func main() {
-	user_age := User{Age: 57}
-	change(&user_age)
-	fmt.Println(user_age.Age)
+	var x int = 5
+	var y int = 5
+
+	result, err := add(x, y)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	fmt.Println(result)
+
 }
 
-type User struct {
-	Age int
+func add(a, b int) (int, error) {
+	if a <= 0 || b <= 0 {
+		return 0, fmt.Errorf("error")
+	}
+	return a + b, nil
 }
-
-func change(u *User) {
-	u.Age = 53
-}
-
