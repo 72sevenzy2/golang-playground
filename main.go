@@ -3,21 +3,21 @@ package main
 import "fmt"
 
 func main() {
-	var x int = 5
-	var y int = 5
+	a := []int{1, 2, 3, 4};
 
-	result, err := add(x, y)
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
-	fmt.Println(result)
+	b := a[1:3];
 
-}
+	fmt.Println("a:", a);
+	fmt.Println("b:", b);
 
-func add(a, b int) (int, error) {
-	if a <= 0 || b <= 0 {
-		return 0, fmt.Errorf("error")
-	}
-	return a + b, nil
+	b[0] = 99;
+
+	fmt.Println("after change");
+	fmt.Println("a:", a)
+	fmt.Println("b:", b)
+
+	c := make([]int, len(b))
+	// fmt.Println(copy(c, b))
+	copy(c, b)
+	fmt.Println(c)
 }
