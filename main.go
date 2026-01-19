@@ -9,7 +9,38 @@ import "fmt"
 // 	return a / b, nil
 // }
 
+// exercise 4
+type Greeter interface {
+	greet() string
+}
+
+type Person struct {
+	Name string
+}
+
+func (p *Person) greet() string{
+	 return "person name " + p.Name
+}
+
+type Bot struct {
+	ID int
+}
+
+func (b Bot) greet() string{
+	return fmt.Sprintf("bot id", b.ID)
+}
+
+func sayHello(g Greeter) {
+	fmt.Println(g.greet())
+}
+
 func main() {
+	p := Person{Name: "cool"}
+	a := Bot{ID: 5}
+
+	sayHello(&p)
+	sayHello(a)
+
 	// first exercise
 	// a := []int{10, 20, 30, 40}
 	// b := a[1:3]
@@ -31,20 +62,21 @@ func main() {
 	// }
 	// fmt.Println(result)
 
-	var i Incrementer
+	// var i Incrementer
 
-	c := Counter(5)
-	i = &c
-	i.int()
-	fmt.Println(c)
+	// c := Counter(5)
+	// i = &c
+	// i.int()
+	// fmt.Println(c)
 }
 
-type Counter int
+// exercise 3
+// type Counter int
 
-type Incrementer interface {
-	int()
-}
+// type Incrementer interface {
+// 	int()
+// }
 
-func (c *Counter) int() {
-	*c++
-}
+// func (c *Counter) int() {
+// 	*c++
+// }
