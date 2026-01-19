@@ -2,23 +2,17 @@ package main
 
 import "fmt"
 
-type User struct {
-	Name string
-}
-
-type Greeter interface {
-	Print() string
-}
-
-func (u User) Print() string {
-	return "user:" + u.Name
-}
-
-func show(p Greeter) {
-	 fmt.Println(p.Print())
-}
-
 func main() {
-	f := User{Name: "coolsaim"}
-	show(f)
+	// first exercise
+	a := []int{10, 20, 30, 40}
+	b := a[1:3]
+	b[0] = 99
+
+	c := make([]int, len(b))
+	copy(c, b)
+	b[1] = 100
+
+	fmt.Println(a) // 10, 99, 100, 40
+	fmt.Println(b) // 99, 100
+	fmt.Println(c) // 99, 30
 }
