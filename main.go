@@ -2,13 +2,12 @@ package main
 
 import "fmt"
 
-func divide(a, b int) (int, error) {
-	if b == 0 || a == 0 {
-		return 0, fmt.Errorf("cannot divide by zero")
-	}
-	return a / b, nil
-}
-
+// func divide(a, b int) (int, error) {
+// 	if b == 0 || a == 0 {
+// 		return 0, fmt.Errorf("cannot divide by zero")
+// 	}
+// 	return a / b, nil
+// }
 
 func main() {
 	// first exercise
@@ -25,10 +24,27 @@ func main() {
 	// fmt.Println(c) // 99, 30
 
 	// second exercise
-	result, err := divide(10, 5)
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
-	fmt.Println(result)
+	// result, err := divide(10, 5)
+	// if err != nil {
+	// 	fmt.Println(err)
+	// 	return
+	// }
+	// fmt.Println(result)
+
+	var i Incrementer
+
+	c := Counter(5)
+	i = &c
+	i.int()
+	fmt.Println(c)
+}
+
+type Counter int
+
+type Incrementer interface {
+	int()
+}
+
+func (c *Counter) int() {
+	*c++
 }
