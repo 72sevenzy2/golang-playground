@@ -1,24 +1,18 @@
 package main
 
-import (
-	"fmt"
-)
-
-type incrementer interface {
-	increment()
-}
-
-type counter int
-
-func (c *counter) increment() {
-	*c++
-}
+import "fmt"
 
 func main() {
-	var i incrementer
+	a := []int{10, 20, 30, 40}
+	b := a[1:3]
+	
+	b[0] = 99
 
-	c := counter(0)
-	i = &c
-	i.increment()
-	fmt.Println(c)
+	c := make([]int, len(b));
+	copy(c, b)
+	b[1] = 100
+
+	fmt.Println(a) // 10 99 100 40
+	fmt.Println(b) // 99 100
+	fmt.Println(c) // 99 30
 }
