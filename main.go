@@ -1,17 +1,20 @@
-	package main
+package main
 
-	import "fmt"
+import "fmt"
 
-	func main() {
-		var a int = 1;
-		var b int = 12;
+var arr [3][2]int
 
-		result, err := divide(a, b);
+func main() {
+	arr[1][0] = 99
+	fmt.Println(arr[1][0])
+	fmt.Println(arr)
 
-		if err != nil {
-			fmt.Println(err.Error())
-		}
+	// seperate from this exercise ^^
 
-		fmt.Println(result)
+	var i counter = 0
 
-	}
+	var b incrementer = &i
+
+	b.increase()
+	
+}
