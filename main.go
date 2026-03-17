@@ -3,9 +3,12 @@ package main
 import "fmt"
 
 func main() {
-	var b [3]int
+	ch := make(chan int)
 
-	for range len(b) {
-		fmt.Println("hi")
-	}
+	ch <- 6
+
+	b := <- ch
+
+	fmt.Println(b)
+
 }
