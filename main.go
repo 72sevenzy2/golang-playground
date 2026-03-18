@@ -2,19 +2,23 @@ package main
 
 import "fmt"
 
-// func send(ch chan<- int) {
-// 	ch <- 6
-// }
-
-// func receive(ch <-chan int) {
-// 	fmt.Println(<-ch)
-// }
+func worker(jobs <-chan int, results chan<- int) {
+	for job := range jobs {
+		results <- job * 2
+	}
+}
 
 func main() {
-	ch := make(chan int, 2)
+	jobs := make(chan int)
+	results := make(chan int)
 
-	ch <- 2
-	ch <- 1
+	// start worker
+	go worker(jobs, results)
 
-	fmt.Println(<-ch)
+	// send jobs
+	jobs <- 1
+	jobs <- 2
+
+	// receive ONLY ONE result
+	fmt.Println(<-results)
 }
