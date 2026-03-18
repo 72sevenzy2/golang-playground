@@ -17,7 +17,9 @@ func main() {
 
 	// send jobs
 	jobs <- 1
+	jobs <- 2
 
 	// receive ONLY ONE result
+	fmt.Println(<-results)
 	fmt.Println(<-results)
 }
