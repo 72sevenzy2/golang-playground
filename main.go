@@ -2,9 +2,9 @@ package main
 
 import "fmt"
 
-func worker(jobs <-chan int, results chan<- int) {
-	for job := range jobs {
-		results <- job * 2
+func worker(results chan<- int, jobs <-chan int) {
+	for i := range jobs {
+		results <- i
 	}
 }
 
@@ -12,14 +12,15 @@ func main() {
 	jobs := make(chan int)
 	results := make(chan int)
 
-	// start worker
-	go worker(jobs, results)
+	go worker(results, jobs)
 
-	// send jobs
-	jobs <- 1
-	jobs <- 2
+	go func ()  {
+		for i := range 2 {
+			jobs <- i
+		}
+		close(jobs)
+	}()
 
-	// receive ONLY ONE result
 	fmt.Println(<-results)
 	fmt.Println(<-results)
 }
