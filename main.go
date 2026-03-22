@@ -1,26 +1,44 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+	"sync"
+)
 
-func worker(results chan<- int, jobs <-chan int) {
-	for i := range jobs {
-		results <- i
+func worker(id int, results chan<- int, jobs <-chan int, su *sync.WaitGroup) {
+	defer su.Done()
+
+	for i := range jobs{
+		results <- i * 2
 	}
+
+	fmt.Println("workers done", id)
 }
 
 func main() {
 	jobs := make(chan int)
 	results := make(chan int)
 
-	go worker(results, jobs)
+	var b sync.WaitGroup
 
-	go func ()  {
-		for i := range 2 {
+	for z := range 3 {
+		b.Add(1)
+		go worker(z, results, jobs, &b)
+	}
+
+	go func() {
+		for i := range 3 {
 			jobs <- i
 		}
 		close(jobs)
 	}()
 
-	fmt.Println(<-results)
-	fmt.Println(<-results)
+	go func ()  {
+		b.Wait()
+		close(results)
+	}()
+
+	for res := range results {
+		fmt.Println("workers done: ", res)
+	}
 }
