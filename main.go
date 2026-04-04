@@ -4,29 +4,30 @@ import (
 	"fmt"
 )
 
-// worker function
-func worker(id int, tasks <-chan int, results chan<- int) {
-	for task := range tasks {
-		fmt.Println("Worker", id, "processing", task)
-		results <- task * 2 // example processing
+func worker(id int, rec chan<- int, sen <-chan int) {
+	for i := range sen {
+		fmt.Println("received with id", i)
+		rec <- i
 	}
 }
 
 func main() {
-	tasks := make(chan int, 5)
-	results := make(chan int, 5)
+	ch1 := make(chan int)
+	rec := make(chan int)
 
-	// start 3 workers
-	for i := 1; i <= 3; i++ {
-		go worker(i, tasks, results)
+	for i := 1; i < 3; i++ {
+		go worker(i, rec, ch1)
 	}
 
-	tasks <- 1
-	tasks <- 2
-	close(tasks)
+	go func ()  {
+		ch1 <- 1
+		ch1 <- 2
+		ch1 <- 3
+		close(ch1)
+	}()
 
-	// collect results
-	for i := 1; i <= 2; i++ {
-		fmt.Println("Result:", <-results)
+	for i := 1; i < 4; i++ {
+		fmt.Println(<-rec)
 	}
+
 }
