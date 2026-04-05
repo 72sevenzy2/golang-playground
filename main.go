@@ -1,19 +1,14 @@
 package main
 
-import (
-	"fmt"
-)
+import "fmt"
 
 func main() {
-	ch1 := make(chan int)
+	ch := make(chan int, 2)
 
-	go func ()  {
-		ch1 <- 1
-		ch1 <- 2
-		ch1 <- 3
-	}()
+	ch <- 1
+	ch <- 2
 
-	for range 4 {
-		fmt.Println(<-ch1)
+	for range 2 {
+		fmt.Println(<-ch)
 	}
 }
