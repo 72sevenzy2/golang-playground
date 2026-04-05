@@ -1,29 +1,34 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+	"time"
+)
 
-	func worker(id int, tasks <-chan int, results chan<- int) {
-		for i := range tasks {
-			fmt.Println("id", id)
-			results <- i
-		}
+func worker(id int, ch1 <-chan int, ch2 chan<- int) {
+	fmt.Println("go worker")
+	for i := range ch1 {
+		fmt.Println("received with id", id)
+		ch2 <- i
 	}
+}
 
 func main() {
-	ch1 := make(chan int)
-	ch2 := make(chan int)
+	ch1 := make(chan int) // sender
+	ch2 := make(chan int) // receiver
 
-	for i := range 3 {
-		go worker(i, ch2, ch1)
+	for i := range 4 {
+		time.Sleep(time.Second)
+		go worker(i, ch1, ch2)
 	}
 
 	go func ()  {
-		ch2 <- 1
-		ch2 <- 2
+		ch1 <- 1
+		ch1 <- 2
 		ch2 <- 3
 	}()
 
 	for range 3 {
-		fmt.Println(<-ch1)
+		fmt.Println(<-ch2)
 	}
 }
