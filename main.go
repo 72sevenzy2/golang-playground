@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"time"
 )
 
 func main() {
@@ -14,8 +13,7 @@ func main() {
 		ch1 <- 3
 	}()
 
-	for range 3 {
-		time.Sleep(time.Second)
+	for range 4 {
 		fmt.Println(<-ch1)
 	}
 }
