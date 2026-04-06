@@ -3,16 +3,28 @@ package main
 import "fmt"
 
 func main() {
-	ch1 := make(chan int, 2) // buffered channels, size 2
+	ch1 := make(chan int, 2)
 	tasks := make(chan int)
 
-	go func ()  {
-		tasks <- 1
-		tasks <- 2
+	// sender
+	go func() {
+		for i := 0; i < 2; i++ {
+			tasks <- i
+		}
+		close(tasks)
 	}()
 
-	for i := range tasks {
-		ch1 <- i
-		fmt.Println("received", i)
+	// worker
+	go func() {
+		for i := range tasks {
+			fmt.Println("received", i)
+			ch1 <- i
+		}
+		close(ch1)
+	}()
+
+	// consumer
+	for v := range ch1 {
+		fmt.Println("result:", v)
 	}
 }
