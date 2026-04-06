@@ -1,29 +1,19 @@
-// simple worker pool
-
 package main
 
-import (
-	"fmt"
-	"time"
-)
-
-func worker(id int, tasks <-chan int, results chan<- int) {
-	for i := range tasks {
-		fmt.Println("received task from worker", id)
-		results <- i
-	}
-}
+import "fmt"
 
 func main() {
-	tasksch := make(chan int)
-	resch := make(chan int)
+	ch1 := make(chan int, 2) // buffered channels, size 2
+	tasks := make(chan int)
 
-	for i := range 3 {
-		time.Sleep(time.Second)
-		go worker(i, tasksch, resch)
+	go func ()  {
+		tasks <- 1
+		tasks <- 2
+		close(tasks)
+	}()
+
+	for i := range tasks {
+		ch1 <- i
+		fmt.Println("received", i)
 	}
-
-	tasksch <- 1
-	close(tasksch)
-
 }
