@@ -9,7 +9,6 @@ func main() {
 	go func ()  {
 		tasks <- 1
 		tasks <- 2
-		close(tasks)
 	}()
 
 	for i := range tasks {
