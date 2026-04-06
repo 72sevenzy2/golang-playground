@@ -15,20 +15,15 @@ func worker(id int, tasks <-chan int, results chan<- int) {
 }
 
 func main() {
-	tasksch := make(chan int, 2)
-	resch := make(chan int, 2)
-
-	go func ()  {
-		tasksch <- 1
-		tasksch <- 2
-		close(tasksch)
-	}()
+	tasksch := make(chan int)
+	resch := make(chan int)
 
 	for i := range 3 {
 		time.Sleep(time.Second)
 		go worker(i, tasksch, resch)
 	}
 
-	fmt.Println(<-resch)
-	fmt.Println(<-resch)
+	tasksch <- 1
+	close(tasksch)
+
 }
