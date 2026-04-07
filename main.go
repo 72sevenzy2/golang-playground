@@ -2,29 +2,33 @@ package main
 
 import "fmt"
 
-func main() {
-	ch1 := make(chan int, 2)
-	tasks := make(chan int)
+func worker(tasks <-chan int, results chan<- int) {
+	for i := range tasks {
+		fmt.Println("recived with task number:", i)
+		results <- i
+	}
+}
 
-	// sender
-	go func() {
-		for i := 0; i < 2; i++ {
-			tasks <- i
+func main() {
+	ch1 := make(chan int) // tasks
+	ch2 := make(chan int) // results
+
+	go func ()  { // workers
+		for i := 0; i < 5; i++ {
+			worker(ch1, ch2)
 		}
-		close(tasks)
+		close(ch2)
 	}()
 
-	// worker
-	go func() {
-		for i := range tasks {
-			fmt.Println("received", i)
+	// senders
+	go func ()  {
+		for i := range 5 {
 			ch1 <- i
 		}
 		close(ch1)
 	}()
 
-	// consumer
-	for v := range ch1 {
-		fmt.Println("result:", v)
+	for range 4 {
+		<-ch2
 	}
 }
