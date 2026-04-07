@@ -1,34 +1,42 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+	"sync"
+)
 
-func worker(tasks <-chan int, results chan<- int) {
+func worker(wg *sync.WaitGroup, tasks <-chan int, results chan<- int) {
+	defer wg.Done()
 	for i := range tasks {
-		fmt.Println("recived with task number:", i)
-		results <- i
+		fmt.Println("received task number:", i)
+		results <- i * 2 // example tasks
 	}
 }
 
 func main() {
-	ch1 := make(chan int) // tasks
-	ch2 := make(chan int) // results
+	tasks := make(chan int, 5)
+	results := make(chan int, 5) // buffered channels = queue
 
-	go func ()  { // workers
-		for i := 0; i < 5; i++ {
-			worker(ch1, ch2)
+	var wg sync.WaitGroup
+
+	for range 3 {
+		wg.Add(1)
+		go worker(&wg, tasks, results)
+	}
+
+	go func() {
+		for i := range 3 {
+			tasks <- i
 		}
-		close(ch2)
+		close(tasks)
 	}()
 
-	// senders
 	go func ()  {
-		for i := range 5 {
-			ch1 <- i
-		}
-		close(ch1)
+		wg.Wait()
+		close(results)
 	}()
 
-	for range 4 {
-		<-ch2
+	for range 3 {
+		fmt.Println(<-results)
 	}
 }
