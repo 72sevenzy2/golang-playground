@@ -5,17 +5,27 @@ import (
 	"sync"
 )
 
-func worker(wg *sync.WaitGroup, tasks <-chan int, results chan<- int) {
+type task struct {
+	index int
+	value int 
+}
+
+type result struct {
+	index int
+	value int
+}
+
+func worker(wg *sync.WaitGroup, tasks <-chan task, results chan<- result) {
 	defer wg.Done()
 	for i := range tasks {
 		fmt.Println("received task number:", i)
-		results <- i * 2 // example tasks
+		results <- result{index: i.index, value: i.value * 2} // example tasks
 	}
 }
 
 func main() {
-	tasks := make(chan int, 5)
-	results := make(chan int, 5) // buffered channels = queue
+	tasks := make(chan task, 5)
+	results := make(chan result, 5) // buffered channels = queue
 
 	var wg sync.WaitGroup
 
@@ -26,7 +36,7 @@ func main() {
 
 	go func() {
 		for i := range 3 {
-			tasks <- i
+			tasks <- task{index: i, value: i}
 		}
 		close(tasks)
 	}()
@@ -36,7 +46,13 @@ func main() {
 		close(results)
 	}()
 
-	for range 3 {
-		fmt.Println(<-results)
+	output := make([]int, 3)
+
+	for v := range results {
+		output[v.index] = v.value
+	}
+
+	for _, v := range output {
+		fmt.Println(v)
 	}
 }
