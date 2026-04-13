@@ -2,9 +2,8 @@ package main
 
 import (
 	"fmt"
+	"sync"
 )
-
-
 
 // fan in pattern
 
@@ -13,6 +12,27 @@ func worker(id int, res chan<- string) {
 		res <- fmt.Sprintf("received worker with id %d", id)
 	}
 	close(res)
+}
+
+func fanin(wg *sync.WaitGroup, channels ...<-chan string) <-chan string {
+	out := make(chan string)
+
+	wg.Add(len(channels))
+	for _, value := range channels {
+		go func (ch <-chan string)  {
+			defer wg.Done()
+			for v := range ch {
+				out <- v
+			}
+		}(value)
+	}
+
+	go func ()  {
+		wg.Wait()
+		close(out)
+	}()
+
+	return out
 }
 
 func main() {
