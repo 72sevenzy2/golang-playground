@@ -39,6 +39,15 @@ func main() {
 	ch1 := make(chan string) // receiver
 	ch2 := make(chan string) // tasks
 
+	var wg sync.WaitGroup
+
 	go worker(1, ch1)
-	go worker(1, ch2)
+	go worker(2, ch2)
+
+	merged := fanin(&wg, ch1, ch2)
+
+	for value := range merged {
+		fmt.Println(value)
+	}
+
 }
