@@ -1,1 +1,1 @@
-A repo where ill be experimenting/learning about golangs features.
+A repo where ill be experimenting/learning about go's features.
