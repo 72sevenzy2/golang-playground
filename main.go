@@ -5,49 +5,39 @@ import (
 	"sync"
 )
 
-// fan in pattern
-
-func worker(id int, res chan<- string) {
-	for range 3 {
-		res <- fmt.Sprintf("received worker with id %d", id)
+func worker(wg *sync.WaitGroup, id int, results chan<- int, tasks <-chan int) {
+	defer wg.Done()
+	fmt.Println("received work with id", id)
+	for i := range tasks {
+		fmt.Println("task id", i)
+		results <- i
 	}
-	close(res)
-}
-
-func fanin(wg *sync.WaitGroup, channels ...<-chan string) <-chan string {
-	out := make(chan string)
-
-	wg.Add(len(channels))
-	for _, value := range channels {
-		go func (ch <-chan string)  {
-			defer wg.Done()
-			for v := range ch {
-				out <- v
-			}
-		}(value)
-	}
-
-	go func ()  {
-		wg.Wait()
-		close(out)
-	}()
-
-	return out
 }
 
 func main() {
-	ch1 := make(chan string) // receiver
-	ch2 := make(chan string) // tasks
+	tasks := make(chan int)
+	results := make(chan int)
 
 	var wg sync.WaitGroup
 
-	go worker(1, ch1)
-	go worker(2, ch2)
-
-	merged := fanin(&wg, ch1, ch2)
-
-	for value := range merged {
-		fmt.Println(value)
+	for i := range 5 {
+		wg.Add(1)
+		go worker(&wg, i, results, tasks)
 	}
 
+	go func ()  {
+		for i := range 3 {
+			tasks <- i
+		}
+		close(tasks)
+	}()
+
+	go func ()  {
+		wg.Wait()
+		close(results)
+	}()
+
+	for range results {
+		fmt.Println(<-results)
+	}
 }
