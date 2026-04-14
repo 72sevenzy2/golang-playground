@@ -5,27 +5,27 @@ import (
 	"fmt"
 	"time"
 )
- 
+
 func worker(ctx context.Context) {
 	for {
 		select {
-		case <- ctx.Done():
+		case <-ctx.Done(): // wait for cancel() func to stop the worker
 			fmt.Println("stopped working")
 			return
-		
-		case <- time.After(1 * time.Second):
+
+		case <-time.After(1 * time.Second): // wait 1 second after each print msg:
 			fmt.Println("working..")
 		}
 	}
 }
 
 func main() {
-	ctx, cancel := context.WithCancel(context.Background())
+	ctx, cancel := context.WithCancel(context.Background()) // initialising the context cancellation
 
-	go worker(ctx)
+	go worker(ctx) // start the worker
 
-	time.Sleep(3 * time.Second)
+	time.Sleep(3 * time.Second) // wait 3 seconds after calling the cancel() func
 	cancel()
 
-	time.Sleep(500 * time.Millisecond)
+	time.Sleep(500 * time.Millisecond) // give some time for the "stopped working" msg to be printed
 }
