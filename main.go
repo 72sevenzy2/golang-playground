@@ -11,7 +11,7 @@ func worker(ctx context.Context) {
 		select {
 		case <-ctx.Done(): // wait for cancel() func to stop the worker
 			fmt.Println("stopped working")
-			return
+			return  // exits before the printing happens so we need to schedule some time for print to execute.
 
 		case <-time.After(1 * time.Second): // wait 1 second after each print msg:
 			fmt.Println("working..")
